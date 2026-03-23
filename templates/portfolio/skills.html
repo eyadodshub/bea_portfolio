@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Skills{% endblock %}
+
+{% block content %}
+<section class="section-darker reveal" style="padding-top: 140px;">
+    <div class="container">
+        <p class="section-subtitle">What I Do</p>
+        <h1 class="section-title">My Skills</h1>
+        <div class="glow-line"></div>
+
+        <div class="row g-4">
+            {% for skill in skills %}
+            <div class="col-md-4">
+                <div class="skill-card">
+                    <h4>{{ skill.name }}</h4>
+                    <p class="muted-text">
+                        {% if skill.proficiency %}
+                            Proficiency: {{ skill.proficiency }}
+                        {% else %}
+                            Skilled in this area and continuously improving.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No skills added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

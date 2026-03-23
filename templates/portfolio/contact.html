@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<section class="section-dark reveal" style="padding-top: 140px;">
+    <div class="container">
+        <p class="section-subtitle">Get In Touch</p>
+        <h1 class="section-title">Contact Me</h1>
+        <div class="glow-line"></div>
+
+        <div class="contact-box">
+            <p><strong>Email:</strong> {{ profile.email }}</p>
+            <p class="muted-text">You may contact me through this email for collaboration, project inquiries, or professional opportunities.</p>
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <input class="form-control mb-3" type="text" name="name" placeholder="Your Name" required>
+                <input class="form-control mb-3" type="email" name="email" placeholder="Your Email" required>
+                <input class="form-control mb-3" type="text" name="subject" placeholder="Subject" required>
+                <textarea class="form-control mb-3" name="message" rows="5" placeholder="Message" required></textarea>
+                <button class="btn btn-accent" type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

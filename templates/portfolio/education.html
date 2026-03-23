@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Education{% endblock %}
+
+{% block content %}
+<section class="section-darker reveal" style="padding-top: 140px;">
+    <div class="container">
+        <p class="section-subtitle">Academic Background</p>
+        <h1 class="section-title">Education</h1>
+        <div class="glow-line"></div>
+
+        <div class="row g-4">
+            {% for item in education %}
+            <div class="col-md-6">
+                <div class="project-card">
+                    <h4>{{ item.school }}</h4>
+                    <p class="muted-text">{{ item.degree }}</p>
+                    <p><strong>Year Attended:</strong> {{ item.year_attended }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No education added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

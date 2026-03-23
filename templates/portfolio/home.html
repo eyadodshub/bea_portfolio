@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        {% if profile.profile_photo %}
+            <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" class="profile-circle">
+        {% endif %}
+        <h1 class="hero-name">{{ profile.full_name }}</h1>
+        <p id="typing-text" class="hero-tagline" data-text="{{ profile.tagline }}"></p>
+
+        <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{% url 'projects' %}" class="btn btn-accent">View Projects</a>
+            <a href="{% url 'contact' %}" class="btn btn-outline-glow">Hire Me</a>
+        </div>
+    </div>
+</section>
+
+<section class="section-dark reveal">
+    <div class="container">
+        <p class="section-subtitle">Discover</p>
+        <h2 class="section-title">About Me</h2>
+        <div class="glow-line"></div>
+
+        <div class="row align-items-center g-5">
+            <div class="col-md-5 text-center">
+                {% if profile.profile_photo %}
+                    <img src="{{ profile.profile_photo.url }}" alt="About Photo" class="about-image">
+                {% endif %}
+            </div>
+
+            <div class="col-md-7">
+                <p class="muted-text">{{ profile.bio }}</p>
+
+                <div class="info-box">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> {{ profile.full_name }}</p>
+                            <p><strong>Email:</strong> {{ profile.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Career Goal:</strong></p>
+                            <p class="muted-text">{{ profile.career_goals }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{% url 'about' %}" class="btn btn-accent">More About Me</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-darker reveal">
+    <div class="container">
+        <p class="section-subtitle">What I Do</p>
+        <h2 class="section-title">My Skills</h2>
+        <div class="glow-line"></div>
+
+        <div class="row g-4">
+            {% for skill in skills %}
+            <div class="col-md-4">
+                <div class="skill-card">
+                    <h4>{{ skill.name }}</h4>
+                    <p class="muted-text">
+                        {% if skill.proficiency %}
+                            Proficiency: {{ skill.proficiency }}
+                        {% else %}
+                            Skilled in this area and continuously improving through projects and practice.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No skills added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section-dark reveal">
+    <div class="container">
+        <p class="section-subtitle">My Work</p>
+        <h2 class="section-title">Projects</h2>
+        <div class="glow-line"></div>
+
+        <div class="row g-4">
+            {% for project in projects %}
+            <div class="col-md-4">
+                <div class="project-card">
+                    <h4>{{ project.title }}</h4>
+                    <p class="muted-text">{{ project.description }}</p>
+                    <p><strong>Tools:</strong> {{ project.technologies }}</p>
+                    {% if project.github_link %}
+                        <a href="{{ project.github_link }}" target="_blank" class="btn btn-accent btn-sm mt-2">View GitHub</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p>No projects added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

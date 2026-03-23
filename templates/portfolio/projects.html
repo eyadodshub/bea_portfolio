@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+<section class="section-dark reveal" style="padding-top: 140px;">
+    <div class="container">
+        <p class="section-subtitle">Portfolio</p>
+        <h1 class="section-title">My Projects</h1>
+        <div class="glow-line"></div>
+
+        <div class="row g-4">
+            {% for project in projects %}
+            <div class="col-md-4">
+                <div class="project-card">
+                    <h4>{{ project.title }}</h4>
+                    <p class="muted-text">{{ project.description }}</p>
+                    <p><strong>Technologies:</strong> {{ project.technologies }}</p>
+                    {% if project.github_link %}
+                        <a href="{{ project.github_link }}" target="_blank" class="btn btn-accent btn-sm mt-2">View GitHub</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p>No projects added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
