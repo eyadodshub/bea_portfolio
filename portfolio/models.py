@@ -15,16 +15,16 @@ class Profile(models.Model):
 
 class Skill(models.Model):
     name = models.CharField(max_length=100)
-    proficiency = models.CharField(max_length=50, blank=True)
+    proficiency = models.PositiveIntegerField(default=80)
 
     def __str__(self):
         return self.name
-
 
 class Project(models.Model):
     title = models.CharField(max_length=150)
     description = models.TextField()
     technologies = models.CharField(max_length=200)
+    image = models.ImageField(upload_to="projects/", blank=True, null=True, help_text="Upload a screenshot or preview image for this project")
     github_link = models.URLField(blank=True)
 
     def __str__(self):
@@ -32,12 +32,33 @@ class Project(models.Model):
 
 
 class Education(models.Model):
-    school = models.CharField(max_length=150)
+    DEGREE_CHOICES = [
+        ('bs', 'Bachelor of Science'),
+        ('ba', 'Bachelor of Arts'),
+        ('hs', 'Senior High School'),
+        ('ms', 'Master\'s Degree'),
+        # Add more if needed
+    ]
+
+    school = models.CharField(max_length=200, verbose_name="School / University")
     degree = models.CharField(max_length=150)
-    year_attended = models.CharField(max_length=100)
+    major = models.CharField(max_length=150, blank=True, null=True, verbose_name="Field / Major")
+    start_year = models.CharField(max_length=4)   # e.g. "2023"
+    end_year = models.CharField(max_length=10, blank=True, null=True)  # e.g. "PRESENT" or "2025"
+    location = models.CharField(max_length=150, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['-start_year']   # Newest first
 
     def __str__(self):
-        return f"{self.school} - {self.degree}"
+        return f"{self.degree} - {self.school}"
+
+    @property
+    def year_range(self):
+        if self.end_year:
+            return f"{self.start_year} – {self.end_year}"
+        return self.start_year
 
 
 class ContactMessage(models.Model):

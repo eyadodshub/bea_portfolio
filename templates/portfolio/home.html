@@ -1,109 +1,307 @@
 {% extends 'base.html' %}
-
 {% block title %}Home{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        padding: 120px 0 80px;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        background-size: 60px 60px;
+        mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 40%, transparent 100%);
+        pointer-events: none;
+    }
+
+    .hero-orb {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(232,83,58,0.12) 0%, transparent 70%);
+        top: -100px;
+        right: -100px;
+        pointer-events: none;
+        border-radius: 50%;
+    }
+
+    .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--accent-dim);
+        border: 1px solid var(--border-accent);
+        border-radius: 50px;
+        padding: 6px 16px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--accent);
+        letter-spacing: 0.05em;
+        margin-bottom: 28px;
+    }
+
+    .hero-tag .dot {
+        width: 6px; height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero-name {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: clamp(3rem, 8vw, 6rem);
+        line-height: 1.0;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+    }
+
+    .hero-name .accent-word {
+        color: var(--accent);
+    }
+
+    .hero-tagline {
+        font-size: 1.15rem;
+        color: var(--text-muted);
+        max-width: 500px;
+        line-height: 1.7;
+        margin-bottom: 40px;
+        min-height: 1.7em; /* Prevents layout shift */
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .hero-photo-wrap {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hero-photo-ring {
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        border-radius: 50%;
+        border: 1px solid var(--border-accent);
+        animation: spin-slow 20s linear infinite;
+    }
+
+    .hero-photo-ring::before {
+        content: '';
+        position: absolute;
+        width: 10px; height: 10px;
+        background: var(--accent);
+        border-radius: 50%;
+        top: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .hero-photo {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--border);
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-photo-placeholder {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 3px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        color: var(--text-dim);
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 40px;
+        margin-top: 56px;
+        padding-top: 40px;
+        border-top: 1px solid var(--border);
+    }
+
+    .stat-item .stat-num {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 2rem;
+        color: var(--text-primary);
+        display: block;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .stat-item .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    /* Snippet cards below hero */
+    .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        padding: 80px 0;
+    }
+
+    .preview-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 28px 24px;
+        transition: border-color 0.3s, transform 0.3s;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .preview-card:hover {
+        border-color: var(--border-accent);
+        transform: translateY(-4px);
+    }
+
+    .preview-card .icon {
+        width: 44px; height: 44px;
+        background: var(--accent-dim);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--accent);
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+    }
+
+    .preview-card h5 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+    }
+
+    .preview-card p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <section class="hero">
-    <div class="hero-content">
-        {% if profile.profile_photo %}
-            <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" class="profile-circle">
-        {% endif %}
-        <h1 class="hero-name">{{ profile.full_name }}</h1>
-        <p id="typing-text" class="hero-tagline" data-text="{{ profile.tagline }}"></p>
-
-        <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
-            <a href="{% url 'projects' %}" class="btn btn-accent">View Projects</a>
-            <a href="{% url 'contact' %}" class="btn btn-outline-glow">Hire Me</a>
-        </div>
-    </div>
-</section>
-
-<section class="section-dark reveal">
+    <div class="hero-orb"></div>
     <div class="container">
-        <p class="section-subtitle">Discover</p>
-        <h2 class="section-title">About Me</h2>
-        <div class="glow-line"></div>
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-7">
+                <div class="hero-tag reveal">
+                    <span class="dot"></span>
+                    Available for work
+                </div>
+                <h1 class="hero-name reveal">
+                    Hi, I'm<br>
+                    <span class="accent-word">{{ profile.full_name|default:"Your Name" }}</span>
+                </h1>
 
-        <div class="row align-items-center g-5">
-            <div class="col-md-5 text-center">
-                {% if profile.profile_photo %}
-                    <img src="{{ profile.profile_photo.url }}" alt="About Photo" class="about-image">
-                {% endif %}
-            </div>
+                <!-- Updated typing element -->
+                <p id="typing-text"
+                   class="hero-tagline reveal"
+                   data-text="{{ profile.tagline|default:'No limits, just progress.'|escape }}">
+                   {{ profile.tagline|default:"No limits, just progress." }}
+                </p>
 
-            <div class="col-md-7">
-                <p class="muted-text">{{ profile.bio }}</p>
+                <div class="hero-actions reveal">
+                    <a href="{% url 'contact' %}" class="btn-accent">Get in Touch</a>
+                    <a href="{% url 'projects' %}" class="btn-ghost">View Projects</a>
+                </div>
 
-                <div class="info-box">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Name:</strong> {{ profile.full_name }}</p>
-                            <p><strong>Email:</strong> {{ profile.email }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Career Goal:</strong></p>
-                            <p class="muted-text">{{ profile.career_goals }}</p>
-                        </div>
+                <div class="hero-stats reveal">
+                    <div class="stat-item">
+                        <span class="stat-num">{{ skills|length }}+</span>
+                        <span class="stat-label">Skills</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">{{ projects|length }}+</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">{{ education|length }}</span>
+                        <span class="stat-label">Degrees</span>
                     </div>
                 </div>
-
-                <div class="mt-4">
-                    <a href="{% url 'about' %}" class="btn btn-accent">More About Me</a>
-                </div>
             </div>
-        </div>
-    </div>
-</section>
-
-<section class="section-darker reveal">
-    <div class="container">
-        <p class="section-subtitle">What I Do</p>
-        <h2 class="section-title">My Skills</h2>
-        <div class="glow-line"></div>
-
-        <div class="row g-4">
-            {% for skill in skills %}
-            <div class="col-md-4">
-                <div class="skill-card">
-                    <h4>{{ skill.name }}</h4>
-                    <p class="muted-text">
-                        {% if skill.proficiency %}
-                            Proficiency: {{ skill.proficiency }}
-                        {% else %}
-                            Skilled in this area and continuously improving through projects and practice.
-                        {% endif %}
-                    </p>
-                </div>
-            </div>
-            {% empty %}
-            <p>No skills added yet.</p>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
-<section class="section-dark reveal">
-    <div class="container">
-        <p class="section-subtitle">My Work</p>
-        <h2 class="section-title">Projects</h2>
-        <div class="glow-line"></div>
-
-        <div class="row g-4">
-            {% for project in projects %}
-            <div class="col-md-4">
-                <div class="project-card">
-                    <h4>{{ project.title }}</h4>
-                    <p class="muted-text">{{ project.description }}</p>
-                    <p><strong>Tools:</strong> {{ project.technologies }}</p>
-                    {% if project.github_link %}
-                        <a href="{{ project.github_link }}" target="_blank" class="btn btn-accent btn-sm mt-2">View GitHub</a>
+            <div class="col-lg-5">
+                <div class="hero-photo-wrap reveal">
+                    <div class="hero-photo-ring"></div>
+                    {% if profile.profile_photo %}
+                        <img src="{{ profile.profile_photo.url }}" alt="{{ profile.full_name }}" class="hero-photo">
+                    {% else %}
+                        <div class="hero-photo-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
                     {% endif %}
                 </div>
             </div>
-            {% empty %}
-            <p>No projects added yet.</p>
-            {% endfor %}
         </div>
+    </div>
+</section>
+
+<!-- Quick preview cards -->
+<section class="container">
+    <div class="preview-grid">
+        <a href="{% url 'about' %}" class="preview-card reveal">
+            <div class="icon"><i class="fas fa-user"></i></div>
+            <h5>About Me</h5>
+            <p>Learn about my background, passion, and career goals.</p>
+        </a>
+        <a href="{% url 'skills' %}" class="preview-card reveal">
+            <div class="icon"><i class="fas fa-bolt"></i></div>
+            <h5>My Skills</h5>
+            <p>A look at the tools, techniques, and abilities I've mastered.</p>
+        </a>
+        <a href="{% url 'projects' %}" class="preview-card reveal">
+            <div class="icon"><i class="fas fa-layer-group"></i></div>
+            <h5>Projects</h5>
+            <p>Curated work I'm proud of — from concept to delivery.</p>
+        </a>
+        <a href="{% url 'contact' %}" class="preview-card reveal">
+            <div class="icon"><i class="fas fa-paper-plane"></i></div>
+            <h5>Contact</h5>
+            <p>Ready to collaborate? Reach out and let's create together.</p>
+        </a>
     </div>
 </section>
 {% endblock %}

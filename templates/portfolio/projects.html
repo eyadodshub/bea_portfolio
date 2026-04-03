@@ -1,30 +1,196 @@
 {% extends 'base.html' %}
-
 {% block title %}Projects{% endblock %}
 
+{% block extra_css %}
+<style>
+    .project-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .project-card:hover {
+        border-color: var(--border-accent);
+        transform: translateY(-6px);
+        box-shadow: 0 20px 56px rgba(0,0,0,0.35), 0 0 0 1px var(--border-accent);
+    }
+
+    /* ── Project image ── */
+    .project-img-wrap {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        background: rgba(255,255,255,0.04);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+
+    .project-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s ease, filter 0.4s ease;
+        filter: brightness(0.9);
+    }
+
+    .project-card:hover .project-img-wrap img {
+        transform: scale(1.05);
+        filter: brightness(1);
+    }
+
+    .project-img-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 2rem;
+        opacity: 0.2;
+    }
+
+    /* ── Card body ── */
+    .project-body {
+        padding: 28px 28px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        flex: 1;
+    }
+
+    .project-num {
+        font-family: 'Syne', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .project-title {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        line-height: 1.3;
+    }
+
+    .project-desc {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        flex: 1;
+    }
+
+    .project-tech-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tech-tag {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        padding: 4px 14px;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        letter-spacing: 0.03em;
+    }
+
+    .project-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        margin-top: auto;
+    }
+
+    .project-github {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--accent);
+        text-decoration: none;
+        transition: gap 0.2s;
+    }
+
+    .project-github:hover {
+        gap: 12px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="section-dark reveal" style="padding-top: 140px;">
+<section class="page-section">
     <div class="container">
-        <p class="section-subtitle">Portfolio</p>
-        <h1 class="section-title">My Projects</h1>
-        <div class="glow-line"></div>
+
+        <div class="reveal">
+            <span class="section-label">Portfolio</span>
+            <h1 class="section-title">My Projects</h1>
+            <div class="section-divider"></div>
+        </div>
 
         <div class="row g-4">
             {% for project in projects %}
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-4 reveal">
                 <div class="project-card">
-                    <h4>{{ project.title }}</h4>
-                    <p class="muted-text">{{ project.description }}</p>
-                    <p><strong>Technologies:</strong> {{ project.technologies }}</p>
-                    {% if project.github_link %}
-                        <a href="{{ project.github_link }}" target="_blank" class="btn btn-accent btn-sm mt-2">View GitHub</a>
-                    {% endif %}
+
+                    <!-- Project Image -->
+                    <div class="project-img-wrap">
+                        {% if project.image %}
+                            <img src="{{ project.image.url }}" alt="{{ project.title }}" />
+                        {% else %}
+                            <div class="project-img-placeholder">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="project-body">
+                        <div class="project-num">Project {{ forloop.counter|stringformat:"02d" }}</div>
+                        <div class="project-title">{{ project.title }}</div>
+                        <p class="project-desc">{{ project.description }}</p>
+
+                        {% if project.technologies %}
+                        <div class="project-tech-wrap">
+                            {% for tech in project.technologies.split %}
+                                <span class="tech-tag">{{ tech|cut:"," }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if project.github_link %}
+                        <div class="project-footer">
+                            <a href="{{ project.github_link }}" target="_blank" class="project-github">
+                                <i class="fab fa-github"></i> View on GitHub <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+
                 </div>
             </div>
             {% empty %}
-            <p>No projects added yet.</p>
+            <div class="col-12">
+                <div class="glass-card text-center py-5" style="color: var(--text-muted);">
+                    <i class="fas fa-layer-group" style="font-size:2.5rem; margin-bottom:16px; opacity:0.3;"></i>
+                    <p>No projects added yet.</p>
+                </div>
+            </div>
             {% endfor %}
         </div>
+
     </div>
 </section>
 {% endblock %}

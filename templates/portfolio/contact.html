@@ -1,26 +1,191 @@
 {% extends 'base.html' %}
-
 {% block title %}Contact{% endblock %}
 
+{% block extra_css %}
+<style>
+    .contact-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr;
+        gap: 48px;
+        align-items: start;
+    }
+
+    @media (max-width: 767px) {
+        .contact-wrapper { grid-template-columns: 1fr; }
+    }
+
+    /* Left panel */
+    .contact-info-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .contact-info-box {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px;
+    }
+
+    .contact-info-box h4 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .contact-info-box p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+    }
+
+    .contact-info-box .email-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent);
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-decoration: none;
+        margin-top: 10px;
+        transition: gap 0.2s;
+    }
+
+    .contact-info-box .email-link:hover { gap: 12px; }
+
+    /* Right panel — form */
+    .contact-form-panel {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 40px;
+    }
+
+    .contact-form-panel h3 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: var(--text-primary);
+        margin-bottom: 28px;
+    }
+
+    .form-label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .field-group { margin-bottom: 20px; }
+
+    textarea.form-control { resize: none; }
+
+    /* Dark mode form inputs */
+    .form-control {
+        background-color: #1f2533 !important;
+        border: 1px solid #334155 !important;
+        color: #e2e8f0 !important;
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+        background-color: #242b3d !important;
+        border-color: var(--accent) !important;
+        color: #f1f5f9 !important;
+        box-shadow: 0 0 0 3px rgba(232, 83, 58, 0.15) !important;
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: #64748b !important;
+    }
+
+    /* Make textarea consistent */
+    textarea.form-control {
+        padding: 16px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="section-dark reveal" style="padding-top: 140px;">
+<section class="page-section">
     <div class="container">
-        <p class="section-subtitle">Get In Touch</p>
-        <h1 class="section-title">Contact Me</h1>
-        <div class="glow-line"></div>
 
-        <div class="contact-box">
-            <p><strong>Email:</strong> {{ profile.email }}</p>
-            <p class="muted-text">You may contact me through this email for collaboration, project inquiries, or professional opportunities.</p>
+        <div class="reveal">
+            <span class="section-label">Get In Touch</span>
+            <h1 class="section-title">Contact Me</h1>
+            <div class="section-divider"></div>
+        </div>
 
-            <form method="post" class="mt-4">
-                {% csrf_token %}
-                <input class="form-control mb-3" type="text" name="name" placeholder="Your Name" required>
-                <input class="form-control mb-3" type="email" name="email" placeholder="Your Email" required>
-                <input class="form-control mb-3" type="text" name="subject" placeholder="Subject" required>
-                <textarea class="form-control mb-3" name="message" rows="5" placeholder="Message" required></textarea>
-                <button class="btn btn-accent" type="submit">Send Message</button>
-            </form>
+        <!-- Flash messages -->
+        {% if messages %}
+        <div style="margin-bottom:24px;">
+          {% for message in messages %}
+          <div style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.4);border-radius:12px;padding:14px 20px;color:#4ade80;font-size:0.9rem;display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-check-circle"></i> {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="contact-wrapper">
+
+            <!-- Left info -->
+            <div class="contact-info-panel reveal">
+                <div class="contact-info-box">
+                    <h4>Let's Work Together</h4>
+                    <p>Open to collaborations, freelance projects, and professional opportunities. Feel free to reach out!</p>
+                    <a href="mailto:{{ profile.email }}" class="email-link">
+                        <i class="fas fa-envelope"></i>
+                        {{ profile.email|default:"your@email.com" }}
+                        <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i>
+                    </a>
+                </div>
+                <div class="contact-info-box">
+                    <h4>Response Time</h4>
+                    <p>I typically respond within 24–48 hours on business days.</p>
+                </div>
+            </div>
+
+            <!-- Right form -->
+            <div class="contact-form-panel reveal">
+                <h3>Send a Message</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-sm-6 field-group">
+                            <label class="form-label">Your Name</label>
+                            <input class="form-control" type="text" name="name" placeholder="Jane Doe" required>
+                        </div>
+                        <div class="col-sm-6 field-group">
+                            <label class="form-label">Your Email</label>
+                            <input class="form-control" type="email" name="email" placeholder="jane@email.com" required>
+                        </div>
+                        <div class="col-12 field-group">
+                            <label class="form-label">Subject</label>
+                            <input class="form-control" type="text" name="subject" placeholder="Project Inquiry" required>
+                        </div>
+                        <div class="col-12 field-group">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control" name="message" rows="6" placeholder="Tell me about your project..." required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn-accent w-100" type="submit" style="text-align:center; width:100%;">
+                                Send Message &nbsp;<i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 </section>

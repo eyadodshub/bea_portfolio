@@ -1,32 +1,251 @@
 {% extends 'base.html' %}
-
 {% block title %}Skills{% endblock %}
 
-{% block content %}
-<section class="section-darker reveal" style="padding-top: 140px;">
-    <div class="container">
-        <p class="section-subtitle">What I Do</p>
-        <h1 class="section-title">My Skills</h1>
-        <div class="glow-line"></div>
+{% block extra_css %}
+<style>
+    /* ─── SKILL DONUT ─── */
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 28px;
+        margin-top: 12px;
+    }
 
-        <div class="row g-4">
-            {% for skill in skills %}
-            <div class="col-md-4">
-                <div class="skill-card">
-                    <h4>{{ skill.name }}</h4>
-                    <p class="muted-text">
-                        {% if skill.proficiency %}
-                            Proficiency: {{ skill.proficiency }}
-                        {% else %}
-                            Skilled in this area and continuously improving.
-                        {% endif %}
-                    </p>
-                </div>
+    .skill-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 36px 24px 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .skill-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .skill-card:hover {
+        border-color: var(--border-accent);
+        transform: translateY(-6px);
+        box-shadow: 0 20px 56px rgba(0,0,0,0.35), 0 0 0 1px var(--border-accent);
+    }
+
+    /* Donut chart */
+    .donut-wrap {
+        position: relative;
+        width: 140px;
+        height: 140px;
+    }
+
+    .donut-svg {
+        width: 140px;
+        height: 140px;
+        transform: rotate(-90deg);
+        overflow: visible;
+    }
+
+    .donut-track {
+        fill: none;
+        stroke: rgba(255,255,255,0.06);
+        stroke-width: 10;
+    }
+
+    .donut-fill {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 10;
+        stroke-linecap: round;
+        /* r=58 → circumference ≈ 364.42 */
+        stroke-dasharray: 364.42;
+        stroke-dashoffset: 364.42;
+        transition: stroke-dashoffset 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        filter: drop-shadow(0 0 7px rgba(232, 83, 58, 0.6));
+    }
+
+    .donut-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .donut-pct {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .donut-pct sup {
+        font-size: 0.9rem;
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .skill-name {
+        font-family: 'Syne', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        text-align: center;
+        letter-spacing: 0.01em;
+    }
+
+    .skill-level {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    /* ─── INTRO STAT BAR ─── */
+    .skills-intro {
+        display: flex;
+        gap: 32px;
+        flex-wrap: wrap;
+        margin-bottom: 56px;
+        padding: 28px 32px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+    }
+
+    .intro-stat strong {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: var(--text-primary);
+        display: block;
+        line-height: 1;
+    }
+
+    .intro-stat span {
+        font-size: 0.8rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+    }
+
+    .intro-stat + .intro-stat {
+        border-left: 1px solid var(--border);
+        padding-left: 32px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+
+        <!-- Header -->
+        <div class="reveal">
+            <span class="section-label">What I Do</span>
+            <h1 class="section-title">My Skills</h1>
+            <div class="section-divider"></div>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="skills-intro reveal">
+            <div class="intro-stat">
+                <strong>{{ skills|length }}</strong>
+                <span>Total Skills</span>
             </div>
+            <div class="intro-stat">
+                <strong>Creative</strong>
+                <span>Discipline</span>
+            </div>
+            <div class="intro-stat">
+                <strong>Pro</strong>
+                <span>Level</span>
+            </div>
+        </div>
+
+        <!-- Skill donuts -->
+        <div class="skills-grid">
+            {% for skill in skills %}
+            {% with pct=skill.proficiency|default:"80" %}
+            <div class="skill-card" data-pct="{{ pct }}">
+                <div class="donut-wrap">
+                    <svg class="donut-svg" viewBox="0 0 140 140">
+                        <circle class="donut-track" cx="70" cy="70" r="58"/>
+                        <circle class="donut-fill"  cx="70" cy="70" r="58"/>
+                    </svg>
+                    <div class="donut-center">
+                        <div class="donut-pct">0<sup>%</sup></div>
+                    </div>
+                </div>
+                <div class="skill-name">{{ skill.name }}</div>
+                {% if skill.proficiency %}
+                    {% if skill.proficiency|add:"0" >= 90 %}
+                        <div class="skill-level">Expert</div>
+                    {% elif skill.proficiency|add:"0" >= 75 %}
+                        <div class="skill-level">Advanced</div>
+                    {% elif skill.proficiency|add:"0" >= 60 %}
+                        <div class="skill-level">Intermediate</div>
+                    {% else %}
+                        <div class="skill-level">Learning</div>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endwith %}
             {% empty %}
-            <p>No skills added yet.</p>
+            <p style="color: var(--text-muted);">No skills added yet.</p>
             {% endfor %}
         </div>
+
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const CIRC = 2 * Math.PI * 58; // r=58 → ≈ 364.42
+
+    /* Count from 0 → target over `duration` ms */
+    function animateCounter(el, target, duration) {
+        const start = performance.now();
+        function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            el.innerHTML   = Math.round(eased * target) + '<sup>%</sup>';
+            if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
+    const donutObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, idx) => {
+            if (!entry.isIntersecting) return;
+            const card = entry.target;
+            const pct  = parseFloat(card.dataset.pct) || 0;
+            const arc  = card.querySelector('.donut-fill');
+            const num  = card.querySelector('.donut-pct');
+
+            setTimeout(() => {
+                /* 1. card slides in */
+                card.classList.add('visible');
+
+                /* 2. donut arc animates */
+                arc.style.strokeDashoffset = CIRC - (pct / 100) * CIRC;
+
+                /* 3. number counts up, slightly after arc starts */
+                setTimeout(() => animateCounter(num, pct, 1300), 100);
+
+            }, idx * 110);
+
+            donutObserver.unobserve(card);
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.skill-card').forEach(card => donutObserver.observe(card));
+</script>
 {% endblock %}

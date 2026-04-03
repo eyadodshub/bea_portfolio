@@ -1,27 +1,151 @@
 {% extends 'base.html' %}
-
 {% block title %}Education{% endblock %}
 
-{% block content %}
-<section class="section-darker reveal" style="padding-top: 140px;">
-    <div class="container">
-        <p class="section-subtitle">Academic Background</p>
-        <h1 class="section-title">Education</h1>
-        <div class="glow-line"></div>
+{% block extra_css %}
+<style>
+    .timeline {
+        position: relative;
+        max-width: 860px;
+        margin: 0 auto;
+        padding-left: 50px;
+    }
 
-        <div class="row g-4">
-            {% for item in education %}
-            <div class="col-md-6">
-                <div class="project-card">
-                    <h4>{{ item.school }}</h4>
-                    <p class="muted-text">{{ item.degree }}</p>
-                    <p><strong>Year Attended:</strong> {{ item.year_attended }}</p>
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, var(--accent), #334155);
+        border-radius: 3px;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 52px;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 13px;
+        top: 18px;
+        width: 16px;
+        height: 16px;
+        background: var(--bg-primary);
+        border: 3px solid var(--accent);
+        border-radius: 50%;
+        z-index: 2;
+    }
+
+    .edu-card {
+        background: #1a1f2e;
+        border: 1px solid rgba(232, 83, 58, 0.25);
+        border-radius: 16px;
+        padding: 32px 36px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .edu-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .edu-year-badge {
+        display: inline-block;
+        background: #0f172a;
+        color: #22d3ee;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 9999px;
+        margin-bottom: 14px;
+        letter-spacing: 0.5px;
+    }
+
+    .edu-degree {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+    }
+
+    .edu-major {
+        color: var(--accent);
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+
+    .edu-school {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 18px;
+    }
+
+    .edu-desc {
+        color: var(--text-dim);
+        line-height: 1.75;
+        font-size: 0.94rem;
+    }
+
+    @media (max-width: 768px) {
+        .timeline { padding-left: 35px; }
+        .timeline::before { left: 12px; }
+        .timeline-dot { left: 6px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+
+        <div class="reveal">
+            <span class="section-label">ACADEMIC BACKGROUND</span>
+            <h1 class="section-title">Education</h1>
+            <div class="section-divider"></div>
+        </div>
+
+        <div class="timeline">
+            {% for edu in education %}
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div class="edu-card">
+                    <div class="edu-year-badge">{{ edu.year_range }}</div>
+
+                    <div class="edu-degree">{{ edu.degree }}</div>
+
+                    {% if edu.major %}
+                    <div class="edu-major">{{ edu.major }}</div>
+                    {% endif %}
+
+                    <div class="edu-school">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ edu.school }}{% if edu.location %} – {{ edu.location }}{% endif %}
+                    </div>
+
+                    {% if edu.description %}
+                    <p class="edu-desc">{{ edu.description }}</p>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}
-            <p>No education added yet.</p>
+            <p style="color: var(--text-muted); text-align: center; padding: 60px 0;">
+                No education entries added yet.
+            </p>
             {% endfor %}
         </div>
+
     </div>
 </section>
 {% endblock %}

@@ -1,394 +1,380 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Portfolio{% endblock %}</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Fancy fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>{% block title %}Portfolio{% endblock %} | {{ profile.full_name|default:"Portfolio" }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        html {
-            scroll-behavior: smooth;
+        :root {
+            --bg-primary: #0d0f14;
+            --bg-secondary: #12151c;
+            --bg-card: #161a23;
+            --accent: #e8533a;
+            --accent-dim: rgba(232, 83, 58, 0.15);
+            --accent-glow: rgba(232, 83, 58, 0.4);
+            --text-primary: #eef0f4;
+            --text-muted: #7a8196;
+            --text-dim: #4a5068;
+            --border: rgba(255,255,255,0.06);
+            --border-accent: rgba(232, 83, 58, 0.3);
         }
 
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #0b1020;
-            color: white;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            line-height: 1.7;
             overflow-x: hidden;
         }
 
-        h1, h2, h3, .navbar-brand {
-            font-family: 'Orbitron', sans-serif;
-        }
+        /* ─── NAVBAR ─── */
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(13, 15, 20, 0.92);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: right;   /* This keeps hamburger on the right */
+    width: fit-content;
+    max-width: 95vw;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    gap: 20px;
+}
 
-        /* Animated background */
-        .animated-bg {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(-45deg, #0f172a, #111827, #1e293b, #0b1120);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
-            z-index: -3;
-        }
+/* Make sure brand takes minimal space if you want to keep it */
+.nav-brand {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 30px;           /* Prevents shifting */
+}
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        /* Desktop nav */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 
-        /* Particles */
-        .particles {
-            position: fixed;
-            inset: 0;
-            overflow: hidden;
-            z-index: -2;
-        }
+/* Hamburger - Force it to the right */
+.hamburger {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.7rem;
+    cursor: pointer;
+    padding: 6px 10px;
+    margin-left: auto;           /* Pushes it to the right */
+    display: none;
+}
 
-        .particle {
-            position: absolute;
-            display: block;
-            width: 8px;
-            height: 8px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 50%;
-            animation: floatParticle linear infinite;
-            bottom: -50px;
-        }
-
-        @keyframes floatParticle {
-            from {
-                transform: translateY(0) scale(1);
-                opacity: 0.2;
-            }
-            to {
-                transform: translateY(-110vh) scale(1.4);
-                opacity: 0;
-            }
-        }
-
-        .navbar-custom {
-            background: rgba(0, 0, 0, 0.28);
-            backdrop-filter: blur(10px);
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .navbar-brand,
-        .nav-link {
-            color: white !important;
-        }
-
-        .navbar-brand span {
-            color: #ff5e57;
-        }
+.hamburger:hover {
+    color: var(--text-primary);
+}
 
         .nav-link {
-            transition: 0.3s ease;
+            color: var(--text-muted) !important;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+            padding: 8px 20px !important;
+            border-radius: 50px;
+            transition: all 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
         }
 
         .nav-link:hover {
-            color: #ff5e57 !important;
-            transform: translateY(-2px);
+            color: var(--text-primary) !important;
+            background: rgba(255,255,255,0.06);
         }
 
-        .hero {
-            position: relative;
-            min-height: 100vh;
-            background: radial-gradient(circle at top, rgba(255,94,87,0.18), transparent 30%);
+        .nav-link.active {
+            color: var(--text-primary) !important;
+            background: var(--accent);
+        }
+
+                /* Improved Mobile Menu */
+.mobile-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(18, 21, 28, 0.98);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--border-accent);
+    border-radius: 20px;
+    padding: 28px 20px;
+    width: 92vw;
+    max-width: 360px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75);
+    z-index: 1001;
+    flex-direction: column;
+    gap: 8px;
+}
+
+        .mobile-menu.show {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 120px 20px 60px;
+            animation: menuPop 0.3s ease forwards;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            animation: fadeInUp 1s ease;
-        }
-
-        .profile-circle {
-            width: 170px;
-            height: 170px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid rgba(255,255,255,0.88);
-            box-shadow: 0 0 25px rgba(255, 94, 87, 0.45);
-            animation: floatImage 3s ease-in-out infinite;
-        }
-
-        @keyframes floatImage {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
-
-        .hero-name {
-            font-size: 3.2rem;
-            font-weight: 800;
-            color: #ff5e57;
-            margin-top: 22px;
-            text-shadow: 0 0 14px rgba(255,94,87,0.35);
-        }
-
-        .hero-tagline {
-            font-size: 1.15rem;
-            color: #e5e7eb;
-            min-height: 32px;
-        }
-
-        .section-dark {
-            background: rgba(17, 24, 39, 0.72);
-            backdrop-filter: blur(6px);
-            padding: 90px 0;
-        }
-
-        .section-darker {
-            background: rgba(11, 17, 32, 0.82);
-            backdrop-filter: blur(6px);
-            padding: 90px 0;
-        }
-
-        .section-subtitle {
-            color: #ff5e57;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .section-title {
-            font-size: 2.4rem;
-            font-weight: 700;
-            margin-bottom: 25px;
-        }
-
-        .about-image {
-            width: 100%;
-            max-width: 360px;
-            border-radius: 12px;
-            object-fit: cover;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-            transition: transform 0.4s ease;
-        }
-
-        .about-image:hover {
-            transform: scale(1.03);
-        }
-
-        .info-box {
-            border: 1px solid rgba(255, 94, 87, 0.4);
-            padding: 22px;
-            border-radius: 14px;
-            margin-top: 20px;
-            background: rgba(255,255,255,0.03);
-            box-shadow: 0 0 18px rgba(255, 94, 87, 0.08);
-        }
-
-        .btn-accent {
-            background: linear-gradient(135deg, #ff5e57, #ff7b72);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            font-weight: 600;
-            border-radius: 999px;
-            box-shadow: 0 8px 22px rgba(255, 94, 87, 0.35);
-            transition: all 0.3s ease;
-        }
-
-        .btn-accent:hover {
-            color: white;
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 28px rgba(255, 94, 87, 0.45);
-        }
-
-        .btn-outline-glow {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.25);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 999px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-glow:hover {
-            border-color: #ff5e57;
-            color: #ff5e57;
-            box-shadow: 0 0 14px rgba(255, 94, 87, 0.3);
-            transform: translateY(-3px);
-        }
-
-        .skill-card,
-        .project-card,
-        .contact-box {
-            background: rgba(23, 32, 51, 0.86);
-            border: 1px solid rgba(255, 94, 87, 0.22);
-            border-radius: 16px;
-            padding: 25px;
-            height: 100%;
-            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-        }
-
-        .skill-card:hover,
-        .project-card:hover,
-        .contact-box:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 34px rgba(0,0,0,0.28);
-            border-color: rgba(255, 94, 87, 0.55);
-        }
-
-        .muted-text {
-            color: #cbd5e1;
-        }
-
-        footer {
-            background: rgba(8, 12, 22, 0.92);
-            color: #94a3b8;
-            text-align: center;
-            padding: 22px 0;
-            border-top: 1px solid rgba(255,255,255,0.06);
-        }
-
-        /* Scroll animation */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s ease;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @keyframes fadeInUp {
+        @keyframes menuPop {
             from {
                 opacity: 0;
-                transform: translateY(35px);
+                transform: translateX(-50%) translateY(-10px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
             }
         }
 
-        .glow-line {
-            width: 90px;
-            height: 4px;
-            background: linear-gradient(to right, #ff5e57, transparent);
-            border-radius: 30px;
-            margin-bottom: 24px;
+        .mobile-menu .nav-link {
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            text-align: center;
+            color: var(--text-primary);
+            transition: all 0.2s;
         }
 
-        textarea,
-        input {
-            background-color: rgba(255,255,255,0.06) !important;
-            color: white !important;
-            border: 1px solid rgba(255,255,255,0.12) !important;
-            border-radius: 12px !important;
+        .mobile-menu .nav-link:hover,
+        .mobile-menu .nav-link.active {
+            background: var(--accent);
+            color: #fff;
         }
 
-        textarea::placeholder,
-        input::placeholder {
-            color: #cbd5e1 !important;
+
+
+        /* Hide desktop on mobile */
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none !important;
+            }
+            .hamburger {
+                display: block;
+            }
         }
 
-        @media (max-width: 768px) {
-            .hero-name {
-                font-size: 2.2rem;
+        @media (min-width: 993px) {
+            .hamburger {
+                display: none;
             }
-            .section-title {
-                font-size: 1.9rem;
-            }
-            .profile-circle {
-                width: 140px;
-                height: 140px;
-            }
+        }
+
+        /* Rest of your styles remain the same */
+        .section-label { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: block; }
+        .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); color: var(--text-primary); line-height: 1.1; margin-bottom: 20px; }
+        .section-divider { width: 48px; height: 2px; background: var(--accent); margin-bottom: 48px; border-radius: 2px; }
+
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        .glass-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 0 1px var(--border-accent);
+        }
+
+        .btn-accent, .btn-ghost { /* keep your existing button styles */
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+            border-radius: 50px;
+            padding: 12px 28px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-accent:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover {
+            border-color: var(--border-accent);
+            background: var(--accent-dim);
+        }
+
+        #typing-text::after {
+            content: '|';
+            animation: blink 0.8s step-end infinite;
+            color: var(--accent);
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
         }
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-<div class="animated-bg"></div>
+    <!-- NAVBAR -->
+<nav class="navbar" id="mainNavbar">
 
-<div class="particles">
-    <span class="particle" style="left: 5%; animation-duration: 13s; animation-delay: 0s;"></span>
-    <span class="particle" style="left: 15%; animation-duration: 18s; animation-delay: 2s;"></span>
-    <span class="particle" style="left: 27%; animation-duration: 15s; animation-delay: 1s;"></span>
-    <span class="particle" style="left: 40%; animation-duration: 20s; animation-delay: 4s;"></span>
-    <span class="particle" style="left: 55%; animation-duration: 12s; animation-delay: 3s;"></span>
-    <span class="particle" style="left: 68%; animation-duration: 17s; animation-delay: 5s;"></span>
-    <span class="particle" style="left: 79%; animation-duration: 14s; animation-delay: 2s;"></span>
-    <span class="particle" style="left: 90%; animation-duration: 19s; animation-delay: 6s;"></span>
-</div>
+    <!-- Desktop Navigation -->
+    <div class="nav-links" id="desktopNav">
+        <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+        <a href="{% url 'about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+        <a href="{% url 'skills' %}" class="nav-link {% if request.resolver_match.url_name == 'skills' %}active{% endif %}">Skills</a>
+        <a href="{% url 'projects' %}" class="nav-link {% if request.resolver_match.url_name == 'projects' %}active{% endif %}">Projects</a>
+        <a href="{% url 'education' %}" class="nav-link {% if request.resolver_match.url_name == 'education' %}active{% endif %}">Education</a>
+        <a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
+    </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}"><span>My</span>Portfolio</a>
-        <div>
-            <a class="nav-link d-inline-block" href="{% url 'home' %}">Home</a>
-            <a class="nav-link d-inline-block" href="{% url 'about' %}">About</a>
-            <a class="nav-link d-inline-block" href="{% url 'skills' %}">Skills</a>
-            <a class="nav-link d-inline-block" href="{% url 'projects' %}">Projects</a>
-            <a class="nav-link d-inline-block" href="{% url 'education' %}">Education</a>
-            <a class="nav-link d-inline-block" href="{% url 'contact' %}">Contact</a>
-        </div>
+    <!-- Hamburger Button - Now properly placed on the right -->
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+        <a href="{% url 'about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+        <a href="{% url 'skills' %}" class="nav-link {% if request.resolver_match.url_name == 'skills' %}active{% endif %}">Skills</a>
+        <a href="{% url 'projects' %}" class="nav-link {% if request.resolver_match.url_name == 'projects' %}active{% endif %}">Projects</a>
+        <a href="{% url 'education' %}" class="nav-link {% if request.resolver_match.url_name == 'education' %}active{% endif %}">Education</a>
+        <a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
     </div>
 </nav>
 
-{% block content %}{% endblock %}
+    <!-- MAIN CONTENT -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 
-<footer>
-    <p class="mb-0">© 2026 My Portfolio. All rights reserved.</p>
-</footer>
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; {% now "Y" %} {{ profile.full_name|default:"Portfolio" }}. All rights reserved.</p>
+    </footer>
 
-<script>
-    // reveal on scroll
-    const reveals = document.querySelectorAll('.reveal');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    function revealOnScroll() {
-        for (let i = 0; i < reveals.length; i++) {
-            const windowHeight = window.innerHeight;
-            const elementTop = reveals[i].getBoundingClientRect().top;
-            const visiblePoint = 100;
+    <!-- Infinite Typing Animation -->
+    <script>
+        function startTypingAnimation() {
+            const el = document.getElementById('typing-text');
+            if (!el) return;
+            const fullText = el.getAttribute('data-text') || el.textContent.trim();
+            if (!fullText) return;
 
-            if (elementTop < windowHeight - visiblePoint) {
-                reveals[i].classList.add('active');
+            let index = 0;
+            let isDeleting = false;
+            let pause = 0;
+
+            function type() {
+                const currentText = el.textContent;
+
+                if (isDeleting) {
+                    el.textContent = fullText.substring(0, currentText.length - 1);
+                } else {
+                    el.textContent = fullText.substring(0, index + 1);
+                    index++;
+                }
+
+                if (!isDeleting && index === fullText.length) {
+                    isDeleting = true;
+                    pause = 1800;
+                } else if (isDeleting && currentText.length === 0) {
+                    isDeleting = false;
+                    index = 0;
+                    pause = 400;
+                }
+
+                let speed = isDeleting ? 25 : 45;
+                setTimeout(type, pause > 0 ? pause : speed);
+                if (pause > 0) pause = 0;
             }
-        }
-    }
 
-    window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll();
-
-    // typing effect
-    const typingElement = document.getElementById('typing-text');
-    if (typingElement) {
-        const text = typingElement.getAttribute('data-text');
-        let index = 0;
-
-        function typeEffect() {
-            if (index < text.length) {
-                typingElement.innerHTML += text.charAt(index);
-                index++;
-                setTimeout(typeEffect, 70);
-            }
+            el.textContent = "";
+            type();
         }
 
-        typingElement.innerHTML = "";
-        typeEffect();
-    }
-</script>
+        document.addEventListener('DOMContentLoaded', startTypingAnimation);
+    </script>
 
+        <!-- Reveal + Improved Mobile Menu Script -->
+    <script>
+        // Reveal animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Mobile Hamburger - Fixed & Improved
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (hamburgerBtn && mobileMenu) {
+            hamburgerBtn.addEventListener('click', () => {
+                const isOpen = mobileMenu.classList.contains('show');
+
+                mobileMenu.classList.toggle('show');
+
+                // Change icon
+                hamburgerBtn.innerHTML = isOpen
+                    ? '<i class="fas fa-bars"></i>'
+                    : '<i class="fas fa-times"></i>';
+            });
+        }
+
+        // Close mobile menu when clicking any link
+        document.querySelectorAll('.mobile-menu .nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('show');
+                hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

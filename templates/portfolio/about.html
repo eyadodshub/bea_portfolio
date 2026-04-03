@@ -1,29 +1,180 @@
 {% extends 'base.html' %}
-
 {% block title %}About{% endblock %}
 
+{% block extra_css %}
+<style>
+    .about-photo-col {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .about-photo-frame {
+        position: relative;
+        width: 320px;
+    }
+
+    .about-photo-frame img,
+    .about-photo-frame .placeholder-img {
+        width: 100%;
+        aspect-ratio: 4/5;
+        object-fit: cover;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        display: block;
+    }
+
+    .about-photo-frame .placeholder-img {
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        color: var(--text-dim);
+    }
+
+    /* Floating badge */
+    .about-badge {
+        position: absolute;
+        bottom: -20px;
+        right: -20px;
+        background: var(--accent);
+        border-radius: 14px;
+        padding: 16px 22px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(232,83,58,0.35);
+    }
+
+    .about-badge .num {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: #fff;
+        line-height: 1;
+    }
+
+    .about-badge .lbl {
+        font-size: 0.72rem;
+        color: rgba(255,255,255,0.7);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .about-content {
+        padding-left: 20px;
+    }
+
+    .about-bio {
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1.8;
+        margin-bottom: 28px;
+    }
+
+    .about-goals-title {
+        font-family: 'Syne', sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+    }
+
+    .about-goals {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.8;
+        margin-bottom: 36px;
+    }
+
+    .info-row {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 36px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 0.9rem;
+    }
+
+    .info-item .info-icon {
+        width: 36px; height: 36px;
+        background: var(--accent-dim);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--accent);
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .info-item strong {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .info-item span {
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 991px) {
+        .about-content { padding-left: 0; margin-top: 60px; }
+        .about-photo-frame { width: 260px; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="section-dark reveal" style="padding-top: 140px;">
+<section class="page-section">
     <div class="container">
-        <p class="section-subtitle">Discover</p>
-        <h1 class="section-title">About Me</h1>
-        <div class="glow-line"></div>
 
-        <div class="row align-items-center g-5">
-            <div class="col-md-5 text-center">
-                {% if profile.profile_photo %}
-                    <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" class="about-image">
-                {% endif %}
-            </div>
-            <div class="col-md-7">
-                <p class="muted-text">{{ profile.bio }}</p>
+        <div class="reveal">
+            <span class="section-label">Who I Am</span>
+            <h1 class="section-title">About Me</h1>
+            <div class="section-divider"></div>
+        </div>
 
-                <div class="info-box">
-                    <p><strong>Full Name:</strong> {{ profile.full_name }}</p>
-                    <p><strong>Email:</strong> {{ profile.email }}</p>
-                    <p><strong>Career Goals:</strong> {{ profile.career_goals }}</p>
+        <div class="row gy-5 align-items-start">
+
+            <!-- Photo -->
+            <div class="col-lg-4 about-photo-col reveal">
+                <div class="about-photo-frame">
+                    {% if profile.profile_photo %}
+                        <img src="{{ profile.profile_photo.url }}" alt="{{ profile.full_name }}">
+                    {% else %}
+                        <div class="placeholder-img">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                    <div class="about-badge">
+                        <div class="num">{{ skills|length }}+</div>
+                        <div class="lbl">Skills</div>
+                    </div>
                 </div>
             </div>
+
+            <!-- Text -->
+            <div class="col-lg-8 about-content reveal">
+                <p class="about-bio">{{ profile.bio|default:"A passionate creative professional dedicated to delivering high-quality work." }}</p>
+
+                <div class="info-row">
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                        <div><strong>Email&nbsp;&nbsp;</strong><span>{{ profile.email|default:"your@email.com" }}</span></div>
+                    </div>
+                </div>
+
+                <div class="about-goals-title">Career Goals</div>
+                <p class="about-goals">{{ profile.career_goals|default:"To continually grow, contribute meaningfully, and make a lasting impact through dedicated work and creative problem-solving." }}</p>
+
+                <div style="display:flex; gap:14px; flex-wrap:wrap;">
+                    <a href="{% url 'skills' %}" class="btn-accent">View My Skills</a>
+                    <a href="{% url 'contact' %}" class="btn-ghost">Get in Touch</a>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
